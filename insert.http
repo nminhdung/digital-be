@@ -1,0 +1,8 @@
+###
+POST http://localhost:7000/api/insert/
+###
+POST http://localhost:7000/api/insert/category
+###
+POST http://localhost:7000/api/insert/brand
+###
+POST http://localhost:7000/api/user/mock
