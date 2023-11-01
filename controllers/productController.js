@@ -11,7 +11,7 @@ const createProduct = asyncHandler(async (req, res) => {
     throw new Error("Missing inputs");
   const thumb = req.files?.thumb.path;
   const images = req.files?.images?.map((item) => item.path);
- 
+
   if (thumb) req.body.thumb = thumb;
   if (images) req.body.images = images;
   if (req.body.title) {
@@ -59,7 +59,14 @@ const getAllProducts = asyncHandler(async (req, res) => {
   if (queries?.title)
     formatedQueries.title = { $regex: queries.title, $options: "i" };
   if (queries?.category) {
-    formatedQueries.category = { $regex: queries.category, $options: "i" };
+    if (queries.category.toLowerCase() === 'all') {
+      delete formatedQueries.category
+    } else {
+      formatedQueries.category = { $regex: queries.category, $options: "i" };
+    }
+  }
+  if (queries?.brand) {
+    formatedQueries.brand = { $regex: queries.brand, $options: "i" };
   }
   if (queries?.color) {
     delete formatedQueries.color;
