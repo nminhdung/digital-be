@@ -9,7 +9,7 @@ const app = express();
 // giup client có thể nhận được cookie bên server gửi 
 app.use(
   cors({
-    origin: [process.env.URL_CLIENT,"https://digitalworld.onrender.com"],
+    origin: [process.env.URL_CLIENT,"https://digitalworld.onrender.com","https://digital-fe.vercel.app/"],
     credentials: true,
     method: ["POST", "PUT", "GET", "DELETE"],
   })
