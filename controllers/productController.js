@@ -101,7 +101,7 @@ const getAllProducts = asyncHandler(async (req, res) => {
   }
   //pagination
   const page = +req.query.page || 1;
-  const limit = +req.query.limit || process.env.LIMIT_PRODUCT;
+  const limit = +req.query.limit || 6;
   const skip = (page - 1) * limit;
   queryCommand.skip(skip).limit(limit);
   //so luong san pham thoa dieu kien
