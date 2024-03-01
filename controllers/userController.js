@@ -128,6 +128,7 @@ const login = asyncHandler(async (req, res) => {
     res.cookie("refreshToken", newRefreshToken, {
       httpOnly: true,
       maxAge: 7 * 24 * 60 * 60 * 1000,
+      sameSite: "none",
     });
     res.status(200).json({
       success: true,
