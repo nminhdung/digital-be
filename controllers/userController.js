@@ -108,39 +108,45 @@ const login = asyncHandler(async (req, res) => {
       mes: "Missing inputs",
     });
   }
+  
   const response = await User.findOne({ email });
-
-  const correctPassword = await response.isCorrectPassword(password);
-  if (response && correctPassword) {
-    //Tach password va role khoi response
-    const { password, role, refreshToken, ...data } = response.toObject();
-    //Tao accessToken
-    const accessToken = generateAccessToken(response._id, role);
-    //Tao refreshToken
-    const newRefreshToken = generateRefreshToken(response._id);
-    //Luu refreshToken vao database
-    await User.findByIdAndUpdate(
-      response._id,
-      { refreshToken: newRefreshToken },
-      { new: true }
-    );
-    //Luu refresh vao cookie thoi gian het han la 7 ngay
-    res.cookie("refreshToken", newRefreshToken, {
-      httpOnly: true,
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-      sameSite: "none",
-    });
-    res.status(200).json({
-      success: true,
-      accessToken,
-      userData: data,
-    });
-  } else {
-    throw new Error("Invalid user please check your email or password!");
+  if(!response){
+    throw new Error("No email found");
+  }else{
+    const correctPassword = await response?.isCorrectPassword(password);
+    if (response && correctPassword) {
+      //Tach password va role khoi response
+      const { password, role, refreshToken, ...data } = response.toObject();
+      //Tao accessToken
+      const accessToken = generateAccessToken(response._id, role);
+      //Tao refreshToken
+      const newRefreshToken = generateRefreshToken(response._id);
+      //Luu refreshToken vao database
+      await User.findByIdAndUpdate(
+        response._id,
+        { refreshToken: newRefreshToken },
+        { new: true }
+      );
+      //Luu refresh vao cookie thoi gian het han la 7 ngay
+      res.cookie("refreshToken", newRefreshToken, {
+        httpOnly: true,
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+        sameSite: "none",
+      });
+      res.status(200).json({
+        success: true,
+        accessToken,
+        userData: data,
+      });
+    } else {
+      throw new Error("Invalid user please check your email or password!");
+    }
   }
+  
+  
 });
 const expiredToken = asyncHandler(async (req, res) => {
-  const cookie = req.cookies;
+
   if (!cookie && !cookie.refreshToken) {
     throw new Error("No refresh token in cookies");
   } else {
@@ -170,7 +176,8 @@ const getUser = asyncHandler(async (req, res) => {
   });
 });
 const logout = asyncHandler(async (req, res) => {
-  const cookie = req.cookies;
+  const cookie = req.cookies; 
+  console.log(req.cookies.refreshToken);
   if (!cookie || !cookie.refreshToken) {
     throw new Error("No refresh token");
   } else {
